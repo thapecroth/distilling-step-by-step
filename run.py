@@ -24,6 +24,8 @@ from train_utils import train_and_evaluate
 from transformers import T5TokenizerFast
 from train_utils import train_and_evaluate, lora_train_and_evaluate
 
+from train_utils import train_and_evaluate
+from transformers import T5TokenizerFast
 
 def run(args):
     #### Prepare datasets
@@ -201,7 +203,7 @@ def run(args):
     if args.lora_train or args.qlora_train:
         lora_train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
     else:
-        train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+        train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics, args.is_eval)
 
 
 if __name__ == '__main__':
@@ -232,6 +234,7 @@ if __name__ == '__main__':
     parser.add_argument('--qlora_train', action='store_true')
     parser.add_argument('--r', type=int, default=8)
     parser.add_argument('--lora_alpha', type=int, default=32)
+    parser.add_argument('--is_eval', action='store_true')
 
     args = parser.parse_args()
 
