@@ -233,6 +233,7 @@ if __name__ == '__main__':
     parser.add_argument('--qlora_train', action='store_true')
     parser.add_argument('--r', type=int, default=8)
     parser.add_argument('--lora_alpha', type=int, default=32)
+    parser.add_argument('--is_eval', action='store_true')
 
     args = parser.parse_args()
 

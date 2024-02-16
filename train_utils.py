@@ -44,7 +44,7 @@ def get_config_dir(args):
     return f'{args.dataset}/{args.from_pretrained.split("/")[1]}/{args.model_type}/{args.llm}/{args.subsample}/{args.label_type}/{args.alpha}/{args.max_input_length}/{args.grad_steps*args.batch_size}/{args.optimizer_name}/{args.lr}'
 
 
-def train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_metrics):
+def train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_metrics, is_eval):
     set_seed(run)
 
     model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained)
@@ -272,6 +272,10 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     else:
         logging_strategy = 'steps'
 
+    if is_eval:
+        logging_dir = None
+        output_dir=None
+
     # clear output dir if already exists
     if os.path.exists(output_dir):
         logging.info('Found existing ckpt directory. Deleted the old directory for the latest run.')
@@ -280,9 +284,10 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     training_args = Seq2SeqTrainingArguments(
         output_dir,
         remove_unused_columns = False,
-        evaluation_strategy = 'steps',
+        evaluation_strategy = 'epoch',
         eval_steps=args.eval_steps,
-        save_strategy='no',
+        save_total_limit=2,
+        save_strategy="epoch",
         save_steps=args.eval_steps,
         logging_dir=logging_dir,
         logging_strategy=logging_strategy,
@@ -330,7 +335,6 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     else:
         raise ValueError
 
-    print_gpu_utilization()
 
     print_gpu_utilization()
 
