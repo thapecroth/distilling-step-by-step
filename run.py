@@ -205,6 +205,7 @@ def run(args):
     else:
         train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics, args.is_eval)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, required=True)
