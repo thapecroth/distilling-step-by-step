@@ -21,7 +21,7 @@ from transformers import AutoTokenizer
 from data_utils import CQADatasetLoader, SVAMPDatasetLoader, ESNLIDatasetLoader, ANLI1DatasetLoader, ASDivDatasetLoader
 from metrics import compute_text_acc, compute_equation_acc, compute_metrics_text, compute_metrics_equation, compute_metrics_text_aux, compute_metrics_equation_aux
 from train_utils import train_and_evaluate
-
+from transformers import T5TokenizerFast
 
 def run(args):
     #### Prepare datasets
@@ -197,7 +197,7 @@ def run(args):
             compute_metrics = compute_metrics_equation(tokenizer)
 
 
-    train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+    train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics, args.is_eval)
 
 
 if __name__ == '__main__':
@@ -223,6 +223,7 @@ if __name__ == '__main__':
     parser.add_argument('--bf16', action='store_true')
     parser.add_argument('--no_log', action='store_true')
     parser.add_argument('--output_rationale', action='store_true')
+    parser.add_argument('--is_eval', action='store_true')
 
     args = parser.parse_args()
 
