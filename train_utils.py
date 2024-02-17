@@ -43,7 +43,7 @@ def get_config_dir(args):
     return f'{args.dataset}/{args.from_pretrained.split("/")[1]}/{args.model_type}/{args.llm}/{args.subsample}/{args.label_type}/{args.alpha}/{args.max_input_length}/{args.grad_steps*args.batch_size}/{args.optimizer_name}/{args.lr}'
 
 
-def train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_metrics, is_eval):
+def train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_metrics):
     set_seed(run)
 
     model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained)
@@ -166,12 +166,12 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     else:
         logging_strategy = 'steps'
 
-    if is_eval:
+    if args.is_eval:
         logging_dir = None
-        output_dir=None
+        output_dir="tmps/"
 
     # clear output dir if already exists
-    if os.path.exists(output_dir):
+    if not args.is_eval and os.path.exists(output_dir):
         logging.info('Found existing ckpt directory. Deleted the old directory for the latest run.')
         shutil.rmtree(output_dir)
 
