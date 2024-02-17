@@ -200,10 +200,15 @@ def run(args):
         else:
             compute_metrics = compute_metrics_equation(tokenizer)
 
+<<<<<<< HEAD
     if args.lora_train or args.qlora_train:
         lora_train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
     else:
         train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics, args.is_eval)
+=======
+
+    train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+>>>>>>> 46d4e22 (fix tokenizer out-of-range error)
 
 
 if __name__ == '__main__':
