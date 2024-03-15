@@ -20,7 +20,7 @@ from transformers import AutoTokenizer
 
 from data_utils import CQADatasetLoader, SVAMPDatasetLoader, ESNLIDatasetLoader, ANLI1DatasetLoader, ASDivDatasetLoader
 from metrics import compute_text_acc, compute_equation_acc, compute_metrics_text, compute_metrics_equation, compute_metrics_text_aux, compute_metrics_equation_aux
-from train_utils import train_and_evaluate
+from train_utils import train_and_evaluate, lora_train_and_evaluate
 
 
 def run(args):
@@ -196,8 +196,10 @@ def run(args):
         else:
             compute_metrics = compute_metrics_equation(tokenizer)
 
-
-    train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+    if args.lora_train or args.qlora_train:
+        lora_train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+    else:
+        train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
 
 
 if __name__ == '__main__':
@@ -223,6 +225,10 @@ if __name__ == '__main__':
     parser.add_argument('--bf16', action='store_true')
     parser.add_argument('--no_log', action='store_true')
     parser.add_argument('--output_rationale', action='store_true')
+    parser.add_argument('--lora_train', action='store_true')
+    parser.add_argument('--qlora_train', action='store_true')
+    parser.add_argument('--r', type=int, default=8)
+    parser.add_argument('--lora_alpha', type=int, default=32)
 
     args = parser.parse_args()
 
