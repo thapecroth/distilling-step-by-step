@@ -1,0 +1,73 @@
+#!/bin/bash -l
+#SBATCH --job-name=distill
+#SBATCH --partition=gpu-a40
+#SBATCH --account=balazinska
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --gres=gpu:1
+#SBATCH --mem=100G
+#SBATCH --time=10:00:00
+#SBATCH --output="/gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/outputs/slurm-%j-%x.out"
+
+cat $0
+echo "Date" $(date)
+echo "--------------------"
+
+dataset=$1
+
+echo "dataset: $dataset"
+
+cd /gscratch/balazinska/enhaoz/distilling-step-by-step
+bash /gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/apptainer-script.sh \
+    time python run.py --from_pretrained google/t5-v1_1-base --dataset $dataset --model_type task_prefix --label_type gt --llm palm --alpha 0.5 --batch_size 64
+Date Thu Feb 29 21:45:49 PST 2024
+--------------------
+dataset: anli1
+INFO:    Warning: Mounting unchecked fs, running e2fsck is recommended.
+Map:   0%|          | 0/16946 [00:00<?, ? examples/s]Map:   6%|▌         | 1000/16946 [00:00<00:05, 2889.74 examples/s]Map:  18%|█▊        | 3037/16946 [00:00<00:01, 7977.25 examples/s]Map:  30%|███       | 5096/16946 [00:00<00:01, 11683.15 examples/s]Map:  42%|████▏     | 7126/16946 [00:00<00:00, 14229.95 examples/s]Map:  54%|█████▍    | 9150/16946 [00:00<00:00, 16014.38 examples/s]Map:  66%|██████▌   | 11207/16946 [00:00<00:00, 17369.25 examples/s]Map:  83%|████████▎ | 14000/16946 [00:01<00:00, 14546.95 examples/s]Map:  95%|█████████▍| 16034/16946 [00:01<00:00, 15889.62 examples/s]Map: 100%|██████████| 16946/16946 [00:01<00:00, 13665.02 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 17664.32 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 17853.57 examples/s]
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+Map:   0%|          | 0/16946 [00:00<?, ? examples/s]Map:  12%|█▏        | 2000/16946 [00:00<00:00, 17160.06 examples/s]Map:  24%|██▎       | 4000/16946 [00:00<00:00, 17396.56 examples/s]Map:  35%|███▌      | 6000/16946 [00:00<00:00, 17427.36 examples/s]Map:  47%|████▋     | 8000/16946 [00:00<00:00, 17365.73 examples/s]Map:  59%|█████▉    | 10000/16946 [00:00<00:00, 17462.63 examples/s]Map:  71%|███████   | 12000/16946 [00:00<00:00, 17613.89 examples/s]Map:  83%|████████▎ | 14000/16946 [00:00<00:00, 17693.02 examples/s]Map:  94%|█████████▍| 16000/16946 [00:00<00:00, 17495.58 examples/s]Map: 100%|██████████| 16946/16946 [00:01<00:00, 15858.84 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 15789.90 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 15970.33 examples/s]
+Map:   0%|          | 0/16946 [00:00<?, ? examples/s]/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:3892: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+Map:   6%|▌         | 1000/16946 [00:00<00:09, 1597.62 examples/s]Map:  12%|█▏        | 2000/16946 [00:01<00:08, 1751.22 examples/s]Map:  18%|█▊        | 3000/16946 [00:01<00:07, 1748.26 examples/s]Map:  24%|██▎       | 4000/16946 [00:02<00:07, 1799.49 examples/s]Map:  30%|██▉       | 5000/16946 [00:02<00:06, 1797.64 examples/s]Map:  35%|███▌      | 6000/16946 [00:03<00:06, 1697.56 examples/s]Map:  41%|████▏     | 7000/16946 [00:04<00:05, 1720.69 examples/s]Map:  47%|████▋     | 8000/16946 [00:04<00:05, 1713.98 examples/s]Map:  53%|█████▎    | 9000/16946 [00:05<00:04, 1731.38 examples/s]Map:  59%|█████▉    | 10000/16946 [00:05<00:04, 1717.63 examples/s]Map:  65%|██████▍   | 11000/16946 [00:06<00:03, 1660.32 examples/s]Map:  71%|███████   | 12000/16946 [00:06<00:02, 1699.45 examples/s]Map:  77%|███████▋  | 13000/16946 [00:07<00:02, 1735.19 examples/s]Map:  83%|████████▎ | 14000/16946 [00:08<00:01, 1731.33 examples/s]Map:  89%|████████▊ | 15000/16946 [00:08<00:01, 1760.06 examples/s]Map:  94%|█████████▍| 16000/16946 [00:09<00:00, 1664.87 examples/s]Map: 100%|██████████| 16946/16946 [00:09<00:00, 1699.05 examples/s]Map: 100%|██████████| 16946/16946 [00:09<00:00, 1716.52 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 1743.52 examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 1724.22 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 1742.05 examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 1721.87 examples/s]
+WARNING:accelerate.utils.other:Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+  0%|          | 0/10000 [00:00<?, ?it/s]  0%|          | 1/10000 [00:08<22:49:57,  8.22s/it]  0%|          | 2/10000 [00:09<11:29:08,  4.14s/it]  0%|          | 3/10000 [00:10<7:56:37,  2.86s/it]   0%|          | 4/10000 [00:12<6:54:20,  2.49s/it]  0%|          | 5/10000 [00:14<5:49:49,  2.10s/it]  0%|          | 6/10000 [00:15<5:04:31,  1.83s/it]  0%|          | 7/10000 [00:17<5:11:33,  1.87s/it]  0%|          | 8/10000 [00:18<4:36:28,  1.66s/it]  0%|          | 9/10000 [00:20<4:21:15,  1.57s/it]  0%|          | 10/10000 [00:21<4:13:00,  1.52s/it]  0%|          | 11/10000 [00:22<4:10:15,  1.50s/it]  0%|          | 12/10000 [00:24<4:03:43,  1.46s/it]  0%|          | 13/10000 [00:25<3:50:30,  1.38s/it]  0%|          | 14/10000 [00:26<3:54:40,  1.41s/it]Traceback (most recent call last):
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 232, in <module>
+    run(args)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 202, in run
+    train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/train_utils.py", line 111, in train_and_evaluate
+    trainer.train()
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1624, in train
+    return inner_training_loop(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1961, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 2902, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/model_utils.py", line 51, in compute_loss
+    expl_outputs = model(**inputs['expl'])
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 1783, in forward
+    loss = loss_fct(lm_logits.view(-1, lm_logits.size(-1)), labels.view(-1))
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/loss.py", line 1179, in forward
+    return F.cross_entropy(input, target, weight=self.weight,
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/functional.py", line 3059, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 778.00 MiB. GPU 0 has a total capacity of 44.56 GiB of which 459.56 MiB is free. Including non-PyTorch memory, this process has 44.10 GiB memory in use. Of the allocated memory 39.33 GiB is allocated by PyTorch, and 4.46 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 14/10000 [00:29<5:48:43,  2.10s/it]
+Command exited with non-zero status 1
+30.13user 13.32system 2:28.84elapsed 29%CPU (0avgtext+0avgdata 2556884maxresident)k
+4352inputs+24outputs (22major+728305minor)pagefaults 0swaps

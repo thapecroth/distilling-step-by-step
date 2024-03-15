@@ -1,0 +1,106 @@
+#!/bin/bash -l
+#SBATCH --job-name=distill
+#SBATCH --partition=gpu-a40
+#SBATCH --account=balazinska
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=8
+#SBATCH --gres=gpu:1
+#SBATCH --mem=100G
+#SBATCH --time=10:00:00
+#SBATCH --output="/gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/outputs/slurm-%j-%x.out"
+
+cat $0
+echo "Date" $(date)
+echo "--------------------"
+
+dataset=$1
+r=$2
+lora_alpha=$3
+lr=$4
+
+echo "dataset: $dataset"
+echo "r: $r"
+echo "lora_alpha: $lora_alpha"
+echo "lr: $lr"
+
+cd /gscratch/balazinska/enhaoz/distilling-step-by-step
+bash /gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/apptainer-script.sh \
+    python run.py --from_pretrained google/t5-v1_1-base --dataset $dataset --model_type task_prefix --label_type gt --llm palm --alpha 0.5 --batch_size 64 --lora_train --r $r --lora_alpha $lora_alpha --lr $lr
+Date Wed Mar 6 19:44:15 PST 2024
+--------------------
+dataset: anli1
+r: 8
+lora_alpha: 32
+lr: 5e-4
+INFO:    Warning: Mounting unchecked fs, running e2fsck is recommended.
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+Map:   0%|          | 0/16946 [00:00<?, ? examples/s]Map:  13%|█▎        | 2134/16946 [00:00<00:00, 21177.44 examples/s]Map:  25%|██▌       | 4285/16946 [00:00<00:00, 21366.16 examples/s]Map:  38%|███▊      | 6472/16946 [00:00<00:00, 21594.53 examples/s]Map:  51%|█████     | 8647/16946 [00:00<00:00, 21653.55 examples/s]Map:  64%|██████▍   | 10847/16946 [00:00<00:00, 21775.62 examples/s]Map:  83%|████████▎ | 14098/16946 [00:00<00:00, 21366.42 examples/s]Map: 100%|██████████| 16946/16946 [00:00<00:00, 16613.78 examples/s]Map: 100%|██████████| 16946/16946 [00:00<00:00, 18837.00 examples/s]
+Map:   0%|          | 0/16946 [00:00<?, ? examples/s]/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:3892: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+Map:   6%|▌         | 1000/16946 [00:00<00:03, 4869.22 examples/s]Map:  12%|█▏        | 2000/16946 [00:00<00:02, 5966.45 examples/s]Map:  18%|█▊        | 3000/16946 [00:00<00:02, 6366.41 examples/s]Map:  24%|██▎       | 4000/16946 [00:00<00:02, 6426.63 examples/s]Map:  30%|██▉       | 5000/16946 [00:00<00:02, 5178.05 examples/s]Map:  35%|███▌      | 6000/16946 [00:01<00:01, 5592.31 examples/s]Map:  41%|████▏     | 7000/16946 [00:01<00:01, 5763.65 examples/s]Map:  47%|████▋     | 8000/16946 [00:01<00:01, 5891.15 examples/s]Map:  53%|█████▎    | 9000/16946 [00:01<00:01, 5992.66 examples/s]Map:  59%|█████▉    | 10000/16946 [00:01<00:01, 5080.56 examples/s]Map:  65%|██████▍   | 11000/16946 [00:01<00:01, 5382.97 examples/s]Map:  71%|███████   | 12000/16946 [00:02<00:00, 5607.30 examples/s]Map:  77%|███████▋  | 13000/16946 [00:02<00:00, 5719.27 examples/s]Map:  83%|████████▎ | 14000/16946 [00:02<00:00, 5725.80 examples/s]Map:  89%|████████▊ | 15000/16946 [00:02<00:00, 4909.65 examples/s]Map:  94%|█████████▍| 16000/16946 [00:02<00:00, 5227.44 examples/s]Map: 100%|██████████| 16946/16946 [00:03<00:00, 5466.69 examples/s]Map: 100%|██████████| 16946/16946 [00:03<00:00, 5538.30 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 6200.31 examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 5935.14 examples/s]
+Map:   0%|          | 0/1000 [00:00<?, ? examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 3864.31 examples/s]Map: 100%|██████████| 1000/1000 [00:00<00:00, 3765.21 examples/s]
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+trainable params: 884,736 || all params: 248,462,592 || trainable%: 0.3560841867092814
+  0%|          | 0/10000 [00:00<?, ?it/s]Could not estimate the number of tokens of the input, floating-point operations will not be computed
+  0%|          | 1/10000 [00:05<15:22:06,  5.53s/it]  0%|          | 2/10000 [00:06<8:08:00,  2.93s/it]   0%|          | 3/10000 [00:07<5:52:38,  2.12s/it]  0%|          | 4/10000 [00:08<4:51:50,  1.75s/it]  0%|          | 5/10000 [00:10<4:29:07,  1.62s/it]  0%|          | 6/10000 [00:11<4:00:09,  1.44s/it]  0%|          | 7/10000 [00:12<3:49:40,  1.38s/it]  0%|          | 8/10000 [00:13<3:31:00,  1.27s/it]  0%|          | 9/10000 [00:14<3:25:57,  1.24s/it]  0%|          | 10/10000 [00:16<3:29:05,  1.26s/it]  0%|          | 11/10000 [00:17<3:25:47,  1.24s/it]  0%|          | 12/10000 [00:18<3:22:23,  1.22s/it]  0%|          | 13/10000 [00:19<3:12:20,  1.16s/it]  0%|          | 14/10000 [00:20<3:17:16,  1.19s/it]  0%|          | 15/10000 [00:22<3:29:35,  1.26s/it]  0%|          | 16/10000 [00:23<3:32:13,  1.28s/it]  0%|          | 17/10000 [00:24<3:31:56,  1.27s/it]  0%|          | 18/10000 [00:26<3:46:12,  1.36s/it]  0%|          | 19/10000 [00:27<3:35:27,  1.30s/it]  0%|          | 20/10000 [00:28<3:36:29,  1.30s/it]  0%|          | 21/10000 [00:30<3:32:35,  1.28s/it]  0%|          | 22/10000 [00:31<3:30:12,  1.26s/it]  0%|          | 23/10000 [00:32<3:27:33,  1.25s/it]  0%|          | 24/10000 [00:33<3:29:55,  1.26s/it]  0%|          | 25/10000 [00:35<3:30:57,  1.27s/it]  0%|          | 26/10000 [00:36<3:28:36,  1.25s/it]  0%|          | 27/10000 [00:38<4:10:22,  1.51s/it]  0%|          | 28/10000 [00:40<4:26:26,  1.60s/it]  0%|          | 29/10000 [00:41<4:10:31,  1.51s/it]  0%|          | 30/10000 [00:43<4:20:09,  1.57s/it]  0%|          | 31/10000 [00:44<4:07:06,  1.49s/it]  0%|          | 32/10000 [00:45<3:56:29,  1.42s/it]  0%|          | 33/10000 [00:47<3:51:12,  1.39s/it]  0%|          | 34/10000 [00:48<3:43:09,  1.34s/it]  0%|          | 35/10000 [00:49<3:43:52,  1.35s/it]  0%|          | 36/10000 [00:51<3:44:15,  1.35s/it]  0%|          | 37/10000 [00:52<3:42:28,  1.34s/it]  0%|          | 38/10000 [00:53<3:39:04,  1.32s/it]  0%|          | 39/10000 [00:54<3:29:10,  1.26s/it]  0%|          | 40/10000 [00:55<3:23:26,  1.23s/it]  0%|          | 41/10000 [00:57<3:20:22,  1.21s/it]  0%|          | 42/10000 [00:58<3:18:48,  1.20s/it]  0%|          | 43/10000 [00:59<3:17:38,  1.19s/it]  0%|          | 44/10000 [01:00<3:19:44,  1.20s/it]  0%|          | 45/10000 [01:01<3:18:15,  1.19s/it]  0%|          | 46/10000 [01:03<3:50:27,  1.39s/it]  0%|          | 47/10000 [01:04<3:41:38,  1.34s/it]  0%|          | 48/10000 [01:06<3:39:26,  1.32s/it]  0%|          | 49/10000 [01:07<3:27:46,  1.25s/it]Traceback (most recent call last):
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 234, in <module>
+    run(args)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 200, in run
+    lora_train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/train_utils.py", line 198, in lora_train_and_evaluate
+    trainer.train()
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1624, in train
+    return inner_training_loop(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1961, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 2902, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/model_utils.py", line 51, in compute_loss
+    expl_outputs = model(**inputs['expl'])
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/peft/peft_model.py", line 1279, in forward
+    return self.base_model(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/peft/tuners/tuners_utils.py", line 160, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 1748, in forward
+    decoder_outputs = self.decoder(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 1115, in forward
+    layer_outputs = layer_module(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 755, in forward
+    hidden_states = self.layer[-1](hidden_states)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 344, in forward
+    forwarded_states = self.DenseReluDense(forwarded_states)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 312, in forward
+    hidden_gelu = self.act(self.wi_0(hidden_states))
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/activations.py", line 57, in forward
+    return 0.5 * input * (1.0 + torch.tanh(math.sqrt(2.0 / math.pi) * (input + 0.044715 * torch.pow(input, 3.0))))
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 78.00 MiB. GPU 0 has a total capacity of 44.56 GiB of which 43.56 MiB is free. Including non-PyTorch memory, this process has 44.51 GiB memory in use. Of the allocated memory 41.08 GiB is allocated by PyTorch, and 3.12 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 49/10000 [01:09<3:54:51,  1.42s/it]

@@ -1,0 +1,122 @@
+#!/bin/bash -l
+#SBATCH --job-name=distill
+#SBATCH --partition=gpu-a40
+#SBATCH --account=balazinska
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=8
+#SBATCH --gres=gpu:1
+#SBATCH --mem=100G
+#SBATCH --time=10:00:00
+#SBATCH --output="/gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/outputs/slurm-%j-%x.out"
+
+cat $0
+echo "Date" $(date)
+echo "--------------------"
+
+dataset=$1
+r=$2
+lora_alpha=$3
+lr=$4
+batch_size=$5
+
+echo "dataset: $dataset"
+echo "r: $r"
+echo "lora_alpha: $lora_alpha"
+echo "lr: $lr"
+echo "batch_size: $batch_size"
+
+cd /gscratch/balazinska/enhaoz/distilling-step-by-step
+bash /gscratch/balazinska/enhaoz/distilling-step-by-step/scripts/apptainer-script.sh \
+    python run.py --from_pretrained google/t5-v1_1-xxl --dataset $dataset --model_type task_prefix --label_type gt --llm palm --alpha 0.5 --batch_size $batch_size --lora_train --r $r --lora_alpha $lora_alpha --lr $lr
+Date Mon Mar 11 11:43:16 PDT 2024
+--------------------
+dataset: cqa
+r: 8
+lora_alpha: 32
+lr: 5e-4
+batch_size: 64
+INFO:    Warning: Mounting unchecked fs, running e2fsck is recommended.
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+
+Map:   0%|          | 0/8766 [00:00<?, ? examples/s]/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:3892: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+
+Map:  11%|█▏        | 1000/8766 [00:00<00:01, 4732.39 examples/s]
+Map:  34%|███▍      | 3000/8766 [00:00<00:00, 8009.72 examples/s]
+Map:  46%|████▌     | 4000/8766 [00:00<00:00, 7006.22 examples/s]
+Map:  68%|██████▊   | 6000/8766 [00:00<00:00, 8792.97 examples/s]
+Map:  91%|█████████▏| 8000/8766 [00:00<00:00, 9781.08 examples/s]
+Map: 100%|██████████| 8766/8766 [00:01<00:00, 8134.14 examples/s]
+
+Map:   0%|          | 0/975 [00:00<?, ? examples/s]
+Map: 100%|██████████| 975/975 [00:00<00:00, 11520.31 examples/s]
+
+Map:   0%|          | 0/1221 [00:00<?, ? examples/s]
+Map: 100%|██████████| 1221/1221 [00:00<00:00, 11976.52 examples/s]
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+trainable params: 9,437,184 || all params: 11,144,769,536 || trainable%: 0.08467814403443578
+
+  0%|          | 0/10000 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 234, in <module>
+    run(args)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/run.py", line 200, in run
+    lora_train_and_evaluate(args, args.run, tokenizer, tokenized_datasets, compute_metrics)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/train_utils.py", line 198, in lora_train_and_evaluate
+    trainer.train()
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1624, in train
+    return inner_training_loop(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 1961, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/trainer.py", line 2902, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/mmfs1/gscratch/balazinska/enhaoz/distilling-step-by-step/model_utils.py", line 50, in compute_loss
+    pred_outputs = model(**inputs['pred'])
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/peft/peft_model.py", line 1279, in forward
+    return self.base_model(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/peft/tuners/tuners_utils.py", line 160, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 1711, in forward
+    encoder_outputs = self.encoder(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 1115, in forward
+    layer_outputs = layer_module(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 695, in forward
+    self_attention_outputs = self.layer[0](
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 602, in forward
+    attention_output = self.SelfAttention(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 527, in forward
+    value_states = project(
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/transformers/models/t5/modeling_t5.py", line 498, in project
+    hidden_states = shape(proj_layer(hidden_states))
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/gscratch/balazinska/enhaoz/distill/lib/python3.10/site-packages/peft/tuners/lora/layer.py", line 437, in forward
+    result = result + lora_B(lora_A(dropout(x))) * scaling
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 76.00 MiB. GPU 0 has a total capacity of 44.56 GiB of which 39.56 MiB is free. Including non-PyTorch memory, this process has 44.51 GiB memory in use. Of the allocated memory 44.09 GiB is allocated by PyTorch, and 119.29 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+  0%|          | 0/10000 [00:09<?, ?it/s]
