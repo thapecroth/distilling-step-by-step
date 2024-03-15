@@ -187,6 +187,7 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
         logging_dir=logging_dir,
         logging_strategy=logging_strategy,
         logging_steps=args.eval_steps,
+        log_level='error',
         max_steps=args.max_steps,
         learning_rate=args.lr,
         gradient_accumulation_steps=args.grad_steps,
@@ -230,19 +231,31 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     else:
         raise ValueError
 
+    print_gpu_utilization()
 
-    trainer.train()
+    result = trainer.train()
+    print_summary(result)
 
 def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_metrics):
 
     peft_config = LoraConfig(
         task_type=TaskType.SEQ_2_SEQ_LM,
         inference_mode=False,
-        r=8,
-        lora_alpha=32,
+        r=args.r,
+        lora_alpha=args.lora_alpha,
         lora_dropout=0.1
     )
-    model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained)
+    if args.qlora_train:
+        nf4_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch.bfloat16
+        )
+        model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained, quantization_config=nf4_config)
+        model = prepare_model_for_kbit_training(model)
+    else:
+        model = T5ForConditionalGeneration.from_pretrained(args.from_pretrained)
     model = get_peft_model(model, peft_config)
     model.print_trainable_parameters()
 
@@ -317,6 +330,7 @@ def lora_train_and_evaluate(args, run, tokenizer, tokenized_datasets, compute_me
     else:
         raise ValueError
 
+    print_gpu_utilization()
 
     print_gpu_utilization()
 
