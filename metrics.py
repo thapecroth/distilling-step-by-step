@@ -39,7 +39,8 @@ def eval_equation(equation):
 def compute_metrics_text(tokenizer):
     def compute_metrics(eval_pred):
         predictions, labels = eval_pred
-        decoded_preds = tokenizer.batch_decode(predictions[0], skip_special_tokens=True)
+        predictions = np.where(predictions[0] != -100, predictions[0], tokenizer.pad_token_id)
+        decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
 
         labels = np.where(labels[0] != -100, labels[0], tokenizer.pad_token_id)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
@@ -54,6 +55,7 @@ def compute_metrics_text(tokenizer):
 def compute_metrics_text_aux(tokenizer):
     def compute_metrics(eval_pred):
         predictions, labels = eval_pred
+        predictions = np.where(predictions != -100, predictions, tokenizer.pad_token_id)
         decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
 
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
@@ -70,28 +72,24 @@ def compute_metrics_text_aux(tokenizer):
 def compute_metrics_equation(tokenizer):
     def compute_metrics(eval_pred):
         predictions, labels = eval_pred
-        predictions = np.where(predictions != -100, predictions, tokenizer.pad_token_id)
-        predictions = np.where(predictions != -100, predictions, tokenizer.pad_token_id)
-        try:
-            decoded_preds = tokenizer.batch_decode(predictions[0], skip_special_tokens=True)
-        except:
-            import ipdb; ipdb.set_trace()
+        predictions = np.where(predictions[0] != -100, predictions[0], tokenizer.pad_token_id)
+        decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
 
         labels = np.where(labels[0] != -100, labels[0], tokenizer.pad_token_id)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
         preds = list()
-        for pred in decoded_preds:    
+        for pred in decoded_preds:
             preds.append(eval_equation(pred))
 
         labels = list()
-        for label in decoded_labels:    
+        for label in decoded_labels:
             labels.append(eval_equation(label))
 
         acc = np.mean(np.array(preds) == np.array(labels))
 
         return {'accuracy': acc}
-    
+
     return compute_metrics
 
 
@@ -105,15 +103,15 @@ def compute_metrics_equation_aux(tokenizer):
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
         preds = list()
-        for pred in decoded_preds:    
+        for pred in decoded_preds:
             preds.append(eval_equation(pred))
 
         labels = list()
-        for label in decoded_labels:    
+        for label in decoded_labels:
             labels.append(eval_equation(label))
 
         acc = np.mean(np.array(preds) == np.array(labels))
 
         return {'accuracy': acc}
-    
+
     return compute_metrics
